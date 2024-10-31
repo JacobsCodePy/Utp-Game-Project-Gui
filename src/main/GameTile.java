@@ -1,7 +1,10 @@
+package main;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
 
 /**
  * Handles display and input taken by the game cell in the application's GUI.
@@ -29,8 +32,7 @@ public class GameTile extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 var tile = ((GameTile)e.getComponent());
-                tile.setMarker();
-                tile.getGameCursor().hideCursor(); // Hide cursor if user uses mouse
+                tile.mark();
             }
         });
 
@@ -38,35 +40,27 @@ public class GameTile extends JPanel {
         setBackground(color);
     }
 
+    public void mark() {
+        if (isMarked) {
+            unsetMarker();
+            controller.unselect();
+            isMarked = false;
+        } else {
+            setMarker();
+            controller.select(position.row(), position.col());
+            isMarked = true;
+        }
+        cursor.setCursor(position);
+        cursor.hideCursor();
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
     }
 
-    public void setPawn(GamePawn pawn) {
-        this.add(pawn);
-        this.hasPawn = true;
-    }
-
-    public void unsetPawn() {
-        this.remove(0);
-        this.hasPawn = false;
-    }
-
     public void setMarker() {
-        if (!isMarked && (hasPawn || !controller.doesSelectRequirePawn())) {
-            forceMarker();
-            controller.select(position.row(), position.col());
-            cursor.setCursor(position); // Set cursor to last selected position
-        } else if (hasPawn) {
-            unsetMarker();
-            controller.unselect();
-        }
-    }
-
-    public void forceMarker() {
-        // Sets marker even if it does not fulfill the necessary conditions
-        var marker = new GameMarker(Color.GREEN);
+        var marker = new GameMarker(new Color(0x55, 0xB2, 0xFF));
         add(marker);
         repaint();
         revalidate();
@@ -74,25 +68,35 @@ public class GameTile extends JPanel {
     }
 
     public void unsetMarker() {
-        for (Component c : getComponents()) {
-            if (c instanceof GameMarker) {
-                remove(c);
-            }
-        }
+        Arrays.stream(getComponents())
+                .filter(c -> c instanceof GameMarker)
+                .forEach(this::remove);
         repaint();
         revalidate();
         isMarked = false;
     }
 
-    public void setAsUnmarked() {
-        isMarked = false;
+    public void setPawn(GamePawn pawn) {
+        if (!pawn.isBlank()) {
+            this.add(pawn);
+            this.hasPawn = true;
+        }
     }
 
-    public GamePosition getPosition() {
-        return position;
+    public void unsetPawn() {
+        Arrays.stream(getComponents())
+                .filter(c -> c instanceof GamePawn)
+                .forEach(this::remove);
+        repaint();
+        revalidate();
+        this.hasPawn = false;
     }
 
     public GameCursor getGameCursor() {
         return cursor;
+    }
+
+    public GamePosition getPosition() {
+        return position;
     }
 }

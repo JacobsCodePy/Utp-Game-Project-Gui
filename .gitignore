@@ -31,4 +31,3 @@ bin/
 ### InteliJ ###
 .idea
 *.iml
-/assets

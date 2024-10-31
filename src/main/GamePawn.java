@@ -1,3 +1,5 @@
+package main;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -33,16 +35,18 @@ public class GamePawn extends JPanel {
         }
     }
 
-    public static BufferedImage loadPawnImage(JFrame frame, Type type) {
+    public static BufferedImage loadPawnImage(JFrame frame, GamePawnType type) {
         return switch(type) {
-            case NormalWhite -> loadImage(frame, "assets/white.png");
-            case NormalBlack -> loadImage(frame, "assets/black.png");
-            case QueenWhite -> loadImage(frame, "assets/white-queen.png");
-            case QueenBlack -> loadImage(frame, "assets/black-queen.png");
+            case WhitePawn -> loadImage(frame, "resource/white.png");
+            case BlackPawn -> loadImage(frame, "resource/black.png");
+            case WhiteQueen -> loadImage(frame, "resource/white-queen.png");
+            case BlackQueen -> loadImage(frame, "resource/black-queen.png");
+            case Blank -> null;
         };
     }
 
-    public enum Type {
-        NormalWhite, NormalBlack, QueenWhite, QueenBlack,
+    public boolean isBlank () {
+        return this.image == null;
     }
+
 }

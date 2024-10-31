@@ -1,3 +1,5 @@
+package main;
+
 import java.util.ArrayList;
 
 /**
@@ -20,33 +22,28 @@ public class GameCursor {
         this.tiles = tiles;
     }
 
+    private boolean isCorrectPosition(GamePosition pos) {
+        return (pos.row() >= 0 && pos.row() < size && pos.col() >= 0 && pos.col() < size);
+    }
+
+    public GameTile getSelected() {
+        return tiles.get(position.getIndex(size));
+    }
+
+    public void hideCursor() {
+        if (!controller.isSelected(position)) getSelected().unsetMarker();
+    }
+
     public void setCursor(GamePosition position) {
         if (!isCorrectPosition(position)) return;
         hideCursor();
         this.position = position;
-        tiles.get(position.getIndex(size)).forceMarker();
+        tiles.get(position.getIndex(size)).setMarker();
     }
 
     public void moveCursor(int by_row, int by_col) {
         setCursor(new GamePosition(position.row() + by_row,
                 position.col() + by_col));
-    }
-
-    private boolean isCorrectPosition(GamePosition pos) {
-        return (pos.row() >= 0 && pos.row() < size && pos.col() >= 0 && pos.col() < size);
-    }
-
-    public boolean isOnMarkedTile(GamePosition pos) {
-        return controller.isSelected(pos);
-    }
-
-    public void hideCursor() {
-        if (!isOnMarkedTile(this.position))
-            tiles.get(this.position.getIndex(size)).unsetMarker();
-    }
-
-    public GameTile getSelected() {
-        return tiles.get(position.getIndex(size));
     }
 
 }
