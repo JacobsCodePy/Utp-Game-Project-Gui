@@ -15,14 +15,12 @@ import java.util.stream.Collectors;
 public class GameBoard extends JPanel {
 
     private final int size;
-    private final Map<GamePawnType, BufferedImage> assets;
-    private final GameState state;
 
     public GameBoard (JFrame frame) {
         super(new GridLayout(8, 8));
         this.size = 8;
-        this.state = new GameState();
-        this.assets = new HashMap<>();
+        GameState state = new GameState();
+        Map<GamePawnType, BufferedImage> assets = new HashMap<>();
         GameController controller = new GameController(frame, state, assets);
         GameKeyboard keyboard = new GameKeyboard(this, controller, size);
 
@@ -53,14 +51,9 @@ public class GameBoard extends JPanel {
                 GamePawn.loadPawnImage(frame, GamePawnType.WhiteQueen));
         assets.put(GamePawnType.Blank, null);
 
-    }
+        // Starting the game
+        controller.start();
 
-    public void start() {
-        Arrays.stream(getComponents())
-                .filter(component -> component instanceof GameTile)
-                .map(component -> (GameTile) component)
-                .forEach(tile -> tile.setPawn(
-                        new GamePawn(assets.get(state.get(tile.getPosition())))));
     }
 
     protected boolean isTileBlank(int i) {

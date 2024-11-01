@@ -34,7 +34,6 @@ public class Main {
         // Adding GameBoard panel to the app with 8x8 tiles
         GameBoard board = new GameBoard(frame);
         board.setPreferredSize(new Dimension(800, 800));
-        board.start();
         frame.add(board);
 
         // Prepare and run apps display

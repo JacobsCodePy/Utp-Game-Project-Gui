@@ -47,6 +47,15 @@ public class GameController{
         from = null;
     }
 
+    public void start() {
+        tiles.forEach(tile -> {
+            Arrays.stream(tile.getComponents())
+                    .filter(component -> component instanceof GamePawn)
+                     .forEach(tile::remove);
+            tile.setPawn(new GamePawn(assets.get(state.get(tile.getPosition()))));
+        });
+    }
+
     public void removeTakenPawns(GameMoveResult result) {
         Arrays.stream(result.takenPawns()).forEach(position -> {
             tiles.stream()
@@ -79,7 +88,25 @@ public class GameController{
             return;
         }
         process(result);
+        handleWinner(result);
         clear();
+    }
+
+    public void handleWinner(GameMoveResult result) {
+        switch (result.winner()) {
+            case White:
+                JOptionPane.showMessageDialog(frame, "Congratulations! White has won the game! " +
+                        "Now the game will restart.");
+                state.reset();
+                start();
+                break;
+            case Black:
+                JOptionPane.showMessageDialog(frame, "Congratulations! Black has won the game! " +
+                        "Now the game will restart.");
+                state.reset();
+                start();
+                break;
+        }
     }
 
     public void clear() {
