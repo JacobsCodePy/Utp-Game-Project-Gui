@@ -14,14 +14,14 @@ import java.util.stream.Collectors;
  */
 public class GameBoard extends JPanel {
 
-    private final int size;
+    private final Map<GamePawnType, BufferedImage> assets;
 
     public GameBoard (JFrame frame) {
         super(new GridLayout(8, 8));
-        this.size = 8;
+        int size = 8;
         GameState state = new GameState();
-        Map<GamePawnType, BufferedImage> assets = new HashMap<>();
-        GameController controller = new GameController(frame, this, state, assets);
+        assets = new HashMap<>();
+        GameController controller = new GameController(frame, this, state);
         GameKeyboard keyboard = new GameKeyboard(this, controller, size);
 
         // Adding tiles
@@ -29,7 +29,7 @@ public class GameBoard extends JPanel {
             int row = i / size;
             int col = i % size;
             this.add(new GameTile(controller, keyboard.getCursor(), new GamePosition(row, col),
-                    isTileBlank(i) ?new Color(0xA8, 0x5D, 0x5D)
+                    (i + i / size) % 2 == 0 ? new Color(0xA8, 0x5D, 0x5D)
                             : new Color(0xFF, 0xD2, 0xA6)));
         }
 
@@ -48,8 +48,8 @@ public class GameBoard extends JPanel {
         controller.start();
     }
 
-    protected boolean isTileBlank(int i) {
-        return (i + i / size) % 2 == 0;
+    public BufferedImage getAsset (GamePawnType type) {
+        return assets.get(type);
     }
 
 }

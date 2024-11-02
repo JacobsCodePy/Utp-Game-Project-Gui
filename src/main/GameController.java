@@ -19,12 +19,10 @@ public class GameController{
     private final GameBoard board;
     private final GameState state;
     private final JFrame frame;
-    private final Map<GamePawnType, BufferedImage> assets;
 
-    public GameController(JFrame frame, GameBoard board, GameState state, Map<GamePawnType, BufferedImage> assets) {
+    public GameController(JFrame frame, GameBoard board, GameState state) {
         this.state = state;
         this.frame = frame;
-        this.assets = assets;
         this.board = board;
     }
 
@@ -57,7 +55,7 @@ public class GameController{
             Arrays.stream(tile.getComponents())
                     .filter(component -> component instanceof GamePawn)
                      .forEach(tile::remove);
-            tile.setPawn(new GamePawn(assets.get(state.get(tile.getPosition()))));
+            tile.setPawn(new GamePawn(board.getAsset(state.get(tile.getPosition()))));
         });
     }
 
@@ -80,8 +78,8 @@ public class GameController{
                 .orElseThrow(() -> new RuntimeException("Couldn't properly process the move."));
         var queen = state.getCurrentPlayer() != GamePlayerType.White ? // Round has changes this inverted
                 GamePawnType.WhiteQueen : GamePawnType.BlackQueen;
-        toTile.setPawn(result.isQueen() ? new GamePawn(assets.get(queen))
-                : new GamePawn(assets.get(state.get(toTile.getPosition()))));
+        toTile.setPawn(result.isQueen() ? new GamePawn(board.getAsset(queen))
+                : new GamePawn(board.getAsset(state.get(toTile.getPosition()))));
         removeTakenPawns(result);
     }
 

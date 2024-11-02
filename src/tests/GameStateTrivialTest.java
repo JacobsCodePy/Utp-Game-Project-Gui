@@ -20,6 +20,7 @@ import java.util.stream.Stream;
  * @7 initialisation of the board from preset state works correctly
  * @8 transformation from the pawn to the queen works correctly
  * @9 moving backwards is incorrect
+ * @10 default board initialisation works correctly.
  */
 public class GameStateTrivialTest {
 
@@ -34,6 +35,32 @@ public class GameStateTrivialTest {
                 new GamePosition(7, 7),
                 new GamePosition(5, 2),
         });
+    }
+
+    @Test
+    public void testIfBoardInitializesCorrectly() {
+        var state = new GameState();
+        for (int i = 0; i < 64; i++) {
+            int row = i / 8;
+            int col = i % 8;
+            if ((i + i / 8) % 2 == 1) {
+                if (i < 24) {
+                    Assertions.assertEquals(
+                            GamePawnType.BlackPawn, state.get(new GamePosition(row, col))
+                    );
+                    continue;
+                }
+                if (i > 63 - 24) {
+                    Assertions.assertEquals(
+                            GamePawnType.WhitePawn, state.get(new GamePosition(row, col))
+                    );
+                    continue;
+                }
+            }
+            Assertions.assertEquals(
+                    GamePawnType.Blank, state.get(new GamePosition(row, col))
+            );
+        }
     }
 
     @Test
