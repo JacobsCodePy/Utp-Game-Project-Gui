@@ -21,7 +21,7 @@ public class GameBoard extends JPanel {
         this.size = 8;
         GameState state = new GameState();
         Map<GamePawnType, BufferedImage> assets = new HashMap<>();
-        GameController controller = new GameController(frame, state, assets);
+        GameController controller = new GameController(frame, this, state, assets);
         GameKeyboard keyboard = new GameKeyboard(this, controller, size);
 
         // Adding tiles
@@ -32,13 +32,6 @@ public class GameBoard extends JPanel {
                     isTileBlank(i) ?new Color(0xA8, 0x5D, 0x5D)
                             : new Color(0xFF, 0xD2, 0xA6)));
         }
-
-        // Getting tiles and giving them to components, by which they're required
-        var tiles = Arrays.stream(getComponents())
-                .filter(c -> c instanceof GameTile)
-                .map(c -> (GameTile) c).collect(Collectors.toCollection(ArrayList::new));
-        controller.setTiles(tiles);
-        keyboard.setTiles((tiles));
 
         // Init pawns images
         assets.put(GamePawnType.BlackPawn,
@@ -53,7 +46,6 @@ public class GameBoard extends JPanel {
 
         // Starting the game
         controller.start();
-
     }
 
     protected boolean isTileBlank(int i) {

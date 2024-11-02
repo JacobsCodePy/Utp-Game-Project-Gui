@@ -54,7 +54,6 @@ public class GameStateCaptureTest {
                             () -> {
                                 GameState st = new GameState(state.getState(), player);
                                 GameMoveResult result = st.process(startingPosition, position);
-                                System.out.println(result.message());
                                 if (moveMap.containsKey(position)) {
                                     Assertions.assertTrue(result.isCorrect());
                                     Assertions.assertEquals(

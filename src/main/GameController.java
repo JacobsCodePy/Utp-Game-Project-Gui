@@ -5,6 +5,8 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Controls the moving process in the game. Register moves thanks to integration
@@ -14,19 +16,22 @@ public class GameController{
 
     private GamePosition from;
     private GamePosition to;
-    private ArrayList<GameTile> tiles;
+    private final GameBoard board;
     private final GameState state;
     private final JFrame frame;
     private final Map<GamePawnType, BufferedImage> assets;
 
-    public GameController(JFrame frame, GameState state, Map<GamePawnType, BufferedImage> assets) {
+    public GameController(JFrame frame, GameBoard board, GameState state, Map<GamePawnType, BufferedImage> assets) {
         this.state = state;
         this.frame = frame;
         this.assets = assets;
+        this.board = board;
     }
 
-    public void setTiles(ArrayList<GameTile> tiles) {
-        this.tiles = tiles;
+    public Stream<GameTile> getTiles() {
+        return Arrays.stream(board.getComponents())
+                .filter(c -> c instanceof GameTile)
+                .map(c -> (GameTile) c);
     }
 
     public boolean doesSelectRequirePawn() {
@@ -48,7 +53,7 @@ public class GameController{
     }
 
     public void start() {
-        tiles.forEach(tile -> {
+        getTiles().forEach(tile -> {
             Arrays.stream(tile.getComponents())
                     .filter(component -> component instanceof GamePawn)
                      .forEach(tile::remove);
@@ -58,7 +63,7 @@ public class GameController{
 
     public void removeTakenPawns(GameMoveResult result) {
         Arrays.stream(result.takenPawns()).forEach(position -> {
-            tiles.stream()
+            getTiles()
                  .filter(tile -> tile.getPosition().equals(position))
                  .findFirst()
                  .ifPresent(GameTile::unsetPawn);
@@ -66,10 +71,10 @@ public class GameController{
     }
 
     public void process(GameMoveResult result) {
-        tiles.stream()
+        getTiles()
                 .filter(tile -> tile.getPosition().equals(from))
                 .forEach(GameTile::unsetPawn);
-        var toTile = tiles.stream()
+        var toTile = getTiles()
                 .filter(tile -> tile.getPosition().equals(to))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Couldn't properly process the move."));
@@ -116,13 +121,13 @@ public class GameController{
     }
 
     public void mark(int row, int col) {
-        tiles.stream()
+        getTiles()
                 .filter(tile -> tile.getPosition().equals(new GamePosition(row, col)))
                 .forEach(GameTile::setMarker);
     }
 
     public void unmark(int row, int col) {
-        tiles.stream()
+        getTiles()
                 .filter(tile -> tile.getPosition().equals(new GamePosition(row, col)))
                 .forEach(GameTile::unsetMarker);
     }

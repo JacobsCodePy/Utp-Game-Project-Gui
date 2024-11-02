@@ -3,7 +3,6 @@ package main;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 
 
 /**
@@ -13,7 +12,7 @@ public class GameKeyboard {
 
     private final GameCursor cursor;
 
-    public GameKeyboard(JPanel panel, GameController controller, int size) {
+    public GameKeyboard(GameBoard panel, GameController controller, int size) {
         cursor = new GameCursor(controller, size);
 
         InputMap inputMap = panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
@@ -68,10 +67,6 @@ public class GameKeyboard {
 
     public GameCursor getCursor() {
         return cursor;
-    }
-
-    public void setTiles(ArrayList<GameTile> tiles) {
-        cursor.setTiles(tiles);
     }
 
 }

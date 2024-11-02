@@ -8,7 +8,6 @@ import java.util.ArrayList;
 public class GameCursor {
 
     private GamePosition position;
-    private ArrayList<GameTile> tiles;
     private final int size;
     private final GameController controller;
 
@@ -18,16 +17,12 @@ public class GameCursor {
         this.controller = controller;
     }
 
-    public void setTiles(ArrayList<GameTile> tiles) {
-        this.tiles = tiles;
-    }
-
     private boolean isCorrectPosition(GamePosition pos) {
         return (pos.row() >= 0 && pos.row() < size && pos.col() >= 0 && pos.col() < size);
     }
 
     public GameTile getSelected() {
-        return tiles.get(position.getIndex(size));
+        return controller.getTiles().toList().get(position.getIndex(size));
     }
 
     public void hideCursor() {
@@ -38,7 +33,7 @@ public class GameCursor {
         if (!isCorrectPosition(position)) return;
         hideCursor();
         this.position = position;
-        tiles.get(position.getIndex(size)).setMarker();
+        controller.getTiles().toList().get(position.getIndex(size)).setMarker();
     }
 
     public void moveCursor(int by_row, int by_col) {
